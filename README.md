@@ -13,7 +13,10 @@ Since I know the process that initiated this suspicious connection, I can extrac
 ![Hash extraction for SharePoInt.exe](pics/windows-3.png)
 
 **Findings:** EventCode 3 logs revealed outbound traffic initiated by Sharepoint.exe to a remote IP. The process hash was extracted and identified as malicious.
-**Recommendations:** restrict execution from temp directories, deploy EDR hash monitoring.
+**Recommendations:** 
+- Block/hash‑ban `SharePoInt.exe` hash across EDR/AV; quarantine artifact from `%SystemRoot%\Temp`.
+- Constrain execution from `Temp` directories (AppLocker/WDAC).  
+- Alert on Sysmon **Event ID 3** for unusual destinations/ports and **Event ID 1** for process creation from temp.
 
 ## Linux Log Analysis (Practice Scenario)
 **Scenario**
@@ -72,7 +75,12 @@ Persistence Mechanism Port: 7654
 **Analysis**
 This activity demonstrated persistence via creation of a new SSH user, followed by brute-force attempts and successful privilege escalation to root. By correlating login timestamps, user actions, and source IP addresses, I confirmed malicious activity and documented indicators of compromise (IOC).
 
-**Recommendations:** enforce SSH key-based auth, monitor useradd and cron changes.
+**Recommendations:** 
+- Enforce **SSH key‑based auth**, disable password auth; limit to allow‑listed IPs with `sshd_config` + firewall.
+- Monitor `useradd`, `/etc/passwd` diffs, and `/etc/sudoers` changes; alert on new admin users.
+- Audit **cron**: lock down `/etc/crontab`, `/etc/cron.*`, and user crontabs; baseline and alert on changes.
+- Egress filtering: block outbound to **10.10.33.31:7654** and similar high‑risk ports.
+
 
 ## Web Log Analysis (Practice Scenario)
 **Scenario**
@@ -95,6 +103,6 @@ Threat Actor Tool: WPScan (identified via user-agent string in the logs)
 This attack represented a credential brute-force attempt against the WordPress login portal. By correlating repeated requests to /wp-login.php from the same source IP and identifying the user-agent string belonging to WPScan, I confirmed the activity as automated brute forcing.
 
 **Response Recommendation**
-Implement rate limiting and account lockouts on /wp-login.php.
-Deploy Web Application Firewall (WAF) rules to block repeated requests.
-Consider multi-factor authentication (MFA) to mitigate credential stuffing attempts.
+- Rate‑limit `/wp-login.php`, enable **MFA** and **account lockout**.
+- Deploy **WAF** rules for brute‑force patterns; 
+- Keep WordPress & plugins patched; consider CAPTCHA on login.
