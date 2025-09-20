@@ -36,7 +36,7 @@ The second event shows : sshd[25955]: Accepted password for jack-brown from 10.1
 
 
 There were 4 failed login attempts before the successful login, which also list the same source IP (10.14.94.82)
-![Filtering sshd events and Accepted/Failed sequences](pics/inux-4.png)
+![Filtering sshd events and Accepted/Failed sequences](pics/linux-4.png)
 
 During Linux log analysis, I identified a malicious cron job configured with a Python reverse shell. The code attempted to establish a persistent outbound connection to the attacker at IP 10.10.33.31 on port 7654. This confirmed the persistence mechanism was set to maintain remote access via reverse shell.
 
