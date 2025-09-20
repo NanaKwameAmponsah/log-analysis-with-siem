@@ -106,3 +106,9 @@ This attack represented a credential brute-force attempt against the WordPress l
 - Rate‑limit `/wp-login.php`, enable **MFA** and **account lockout**.
 - Deploy **WAF** rules for brute‑force patterns; 
 - Keep WordPress & plugins patched; consider CAPTCHA on login.
+
+
+
+
+## Indicators of Compromise (IOCs)
+![IOCS](pics/IOCs.png)
